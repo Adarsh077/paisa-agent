@@ -1,0 +1,4 @@
+llama-index
+llama-index-tools-mcp
+python-dotenv
+fastapi
