@@ -3,6 +3,7 @@ from llama_index.core.agent import FunctionCallingAgent
 from llama_index.core.base.llms.types import ChatMessage
 from llama_index.llms.openai import OpenAI
 from mcp_client import mcp_tool_spec
+from tools import get_current_date_tool
 
 llm = OpenAI(model="gpt-4.1-nano", temperature=0)
 
@@ -15,6 +16,7 @@ Before you help a user, you need to work with tools to interact with Our Databas
 
 async def create_agent():
     mcp_tools = await mcp_tool_spec.to_tool_list_async()
+    mcp_tools.append(get_current_date_tool)
 
     # Create the agent
     agent = FunctionCallingAgent.from_tools(
