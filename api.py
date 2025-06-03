@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from pydantic import BaseModel
 from agent import chat
-import asyncio
+from llama_index.core.base.llms.types import ChatMessage
 
 app = FastAPI()
 
@@ -18,8 +18,6 @@ class ChatRequest(BaseModel):
 @app.post("/chat")
 async def agent_endpoint(request: ChatRequest):
     print(request.messages)
-    # Convert pydantic models to llama_index ChatMessage objects
-    from llama_index.core.base.llms.types import ChatMessage
 
     messages = [ChatMessage(role=m.role, content=m.content) for m in request.messages]
     response = await chat(messages)

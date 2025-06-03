@@ -2,8 +2,8 @@ import asyncio
 from llama_index.core.agent import FunctionCallingAgent
 from llama_index.core.base.llms.types import ChatMessage
 from llama_index.llms.openai import OpenAI
-from mcp_client import mcp_tool_spec
-from tools import get_current_date_tool
+from tools import tools
+import planner.planner as planner
 
 llm = OpenAI(model="gpt-4.1-nano", temperature=0)
 
@@ -15,8 +15,7 @@ Before you help a user, you need to work with tools to interact with Our Databas
 
 
 async def create_agent():
-    mcp_tools = await mcp_tool_spec.to_tool_list_async()
-    mcp_tools.append(get_current_date_tool)
+    mcp_tools = await tools.get_tools()
 
     # Create the agent
     agent = FunctionCallingAgent.from_tools(
@@ -45,5 +44,10 @@ async def chat(messages: list[ChatMessage] = []):
     if len(messages) > 1:
         chat_history = messages[1:]
 
+    plan = await planner.plan(primary_message, chat_history=chat_history)
+    if plan:
+        primary_message = f"{primary_message}\n\nPlan:\n{plan}"
+
     response = await agent.achat(primary_message, chat_history=chat_history)
+
     return response
