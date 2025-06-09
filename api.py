@@ -17,8 +17,6 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat")
 async def agent_endpoint(request: ChatRequest):
-    print(request.messages)
-
     messages = [ChatMessage(role=m.role, content=m.content) for m in request.messages]
     response = await chat(messages)
     return {"response": str(response)}
