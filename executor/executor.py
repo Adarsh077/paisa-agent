@@ -9,6 +9,15 @@ SYSTEM_PROMPT = """\
 You are an AI assistant for Paisa which is an application to record and track expenses/income.
 
 Before you help a user, you need to work with tools to interact with our database.
+
+Notes:
+- Always show transactions in a table format with columns: date, label, amount. Amount should be negative for expenses and positive for income.
+- While searching transaction with date, always search with dates -1 day and +1 day.
+- If year is not provided, assume the current year.
+- If month is not provided, assume the current month.
+- If day is not provided, assume the current day.
+- Use startDate and endDate filters only if specified. DO NOT use them for terms similar to 'last record', 'previous record', etc.
+- Do not send 'null' as argument for any tool. If a tool does not require an argument, simply do not include it in the function call.
 """
 
 
@@ -21,19 +30,16 @@ async def __create_executor_agent():
         tools=tools,
         system_prompt=SYSTEM_PROMPT,
         verbose=True,
-        memory=None,  # No memory for the executor agent
-        state=None,  # No state for the executor agent
     )
     return agent
 
 
-async def execute(message: ChatMessage, chat_history: list[ChatMessage] = []):
-    print("a", message)
+async def execute(message: str, chat_history: list[ChatMessage] = []):
     if not message:
         raise ValueError("No message provided")
 
     agent = await __create_executor_agent()
 
-    response = await agent.achat(message.content, chat_history=chat_history)
+    response = await agent.achat(message, chat_history=chat_history)
 
     return response
