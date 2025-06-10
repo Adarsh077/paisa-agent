@@ -27,7 +27,7 @@ async def __create_executor_agent():
     # Create the agent
     agent = FunctionCallingAgent.from_tools(
         llm=llm,
-        tools=tools,
+        tools=list(tools),
         system_prompt=SYSTEM_PROMPT,
         verbose=True,
     )

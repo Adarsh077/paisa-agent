@@ -79,7 +79,7 @@ async def __create_planner_agent():
     agent = FunctionCallingAgent.from_tools(
         llm=llm,
         max_function_calls=0,
-        tools=tools,
+        tools=list(tools),
         system_prompt=SYSTEM_PROMPT,
         verbose=True,
     )

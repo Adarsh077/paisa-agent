@@ -1,5 +1,6 @@
 from datetime import datetime
-from llama_index.core.tools import FunctionTool
+from typing import Sequence
+from llama_index.core.tools import FunctionTool, BaseTool
 from tools.mcp_client import mcp_tool_spec
 
 
@@ -13,7 +14,7 @@ get_current_date_tool = FunctionTool.from_defaults(
 )
 
 
-async def get_tools():
+async def get_tools() -> Sequence[BaseTool]:
     mcp_tools = await mcp_tool_spec.to_tool_list_async()
     mcp_tools.append(get_current_date_tool)
     return mcp_tools

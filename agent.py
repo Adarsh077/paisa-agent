@@ -13,7 +13,7 @@ async def chat(messages: list[ChatMessage] = []):
     if len(messages) == 0:
         raise ValueError("No messages provided")
 
-    primary_message = messages[-1].content
+    primary_message = messages[-1].content or ''
     chat_history = []
     if len(messages) > 1:
         chat_history = messages[:-1]
