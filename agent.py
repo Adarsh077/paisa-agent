@@ -1,6 +1,7 @@
 from llama_index.core.base.llms.types import ChatMessage
 from planner.planner import plan
 from executor.executor import execute
+from preprocessor.precprocessor import preprocess
 
 
 async def chat(messages: list[ChatMessage] = []):
@@ -17,6 +18,8 @@ async def chat(messages: list[ChatMessage] = []):
     chat_history = []
     if len(messages) > 1:
         chat_history = messages[:-1]
+
+    primary_message = preprocess(primary_message, chat_history)
 
     plan_response = await plan(primary_message, chat_history=chat_history)
     if plan_response:
