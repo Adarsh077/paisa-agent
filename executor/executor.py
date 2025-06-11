@@ -12,6 +12,7 @@ Before you help a user, you need to work with tools to interact with our databas
 
 Notes:
 - Always show transactions in a table format with columns: date, label, amount. Amount should be negative for expenses and positive for income.
+- Always show tags in a table format with columns: label.
 - While searching transaction with date, always search with dates -1 day and +1 day.
 - If year is not provided, assume the current year.
 - If month is not provided, assume the current month.
