@@ -1,5 +1,5 @@
 from llama_index.core.base.llms.types import ChatMessage
-from tools.tools import get_tools
+from src.tools.tools import get_tools
 from llama_index.core.agent import FunctionCallingAgent
 from llama_index.llms.openai import OpenAI
 
@@ -19,6 +19,7 @@ Notes:
 - If day is not provided, assume the current day.
 - Use startDate and endDate filters only if specified. DO NOT use them for terms similar to 'last record', 'previous record', etc.
 - Do not send 'null' as argument for any tool. If a tool does not require an argument, simply do not include it in the function call.
+- `label` of the transaction should not include bank name, credit/debit card details.
 """
 
 

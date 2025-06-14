@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from agent import chat
+from src.chat.agent import chat
 from llama_index.core.base.llms.types import ChatMessage
 
 app = FastAPI()

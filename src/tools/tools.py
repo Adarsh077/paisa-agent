@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Sequence
 from llama_index.core.tools import FunctionTool, BaseTool
-from tools.mcp_client import mcp_tool_spec
+from src.tools.mcp_client import mcp_tool_spec
 
 
 def get_current_date():
