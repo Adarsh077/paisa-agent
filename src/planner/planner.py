@@ -54,10 +54,14 @@ ASK USER ABOUT ANY MISSING DETAILS VERY RARELY, ONLY WHEN IT IS ABSOLUTELY NECES
    Do NOT re-plan or duplicate actions that have already been addressed or completed in the session.  
    For example, if a transaction for a specific amount and label has already been added in the session, do not plan to add it again.
 
-6. **Instruction Output:**  
+6. **SMS Queries:**  
+   - If the query does not contain any transaction, simply skip it and do not send any tool calls.
+   - If the SMS is about reminder of a future transaction, do not process it.
+   
+7. **Instruction Output:**  
    Steps should be expressed as clear, concise, and helpful natural language instructions—no code or JSON.
 
-7. **Working Example:**  
+8. **Working Example:**  
    - "Get all transactions":  
      - Output: "Retrieve all transaction records from the database."
    - "Delete all transactions":  

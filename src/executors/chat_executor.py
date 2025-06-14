@@ -23,7 +23,7 @@ Notes:
 """
 
 
-async def __create_executor_agent():
+async def __create_chat_executor_agent():
     tools = await get_tools()
 
     # Create the agent
@@ -36,11 +36,11 @@ async def __create_executor_agent():
     return agent
 
 
-async def execute(message: str, chat_history: list[ChatMessage] = []):
+async def chat_execute(message: str, chat_history: list[ChatMessage] = []):
     if not message:
         raise ValueError("No message provided")
 
-    agent = await __create_executor_agent()
+    agent = await __create_chat_executor_agent()
 
     response = await agent.achat(message, chat_history=chat_history)
 
