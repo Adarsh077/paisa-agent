@@ -11,4 +11,4 @@ COPY . .
 EXPOSE 8002
 
 # CMD ["mcp", "dev", "server.py"]
-CMD ["uvicorn", "api:app", "--reload", "--host", "0.0.0.0", "--port", "8002"]
+CMD ["uvicorn", "src.main:app", "--reload", "--host", "0.0.0.0", "--port", "8002"]
