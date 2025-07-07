@@ -38,15 +38,21 @@ tools = [
 ]
 
 
-def viewer(messages):
-    messages = [{"role": m.role, "content": m.content} for m in messages]
-    messages.insert(
-        0,
+def viewer(primary_message: str, chat_history: list = []):
+    messages = [{"role": m.role, "content": m.content} for m in chat_history]
+    messages.append({"role": "user", "content": primary_message})
+    messages.append(
         {
             "role": "system",
             "content": f"""
-Call only the tools if they make sense. Do not call the tools if the question is not related to transactions or if tools cannot be used.
+Call only the tools if user is specifically asking to view list of transactions. Do not call the tools if the question is not related to transactions or if it is calculation based.
 Return 'NONE' if the question is not related to transactions or if tools cannot be used.
+
+ALWAYS Return 'NONE' for calculation based questions or if the question is not related to transactions.
+- How much did I spend on groceries?: "NONE"
+- How much did I earn last month?: "NONE"
+- What were my total expenses last month?: "NONE"
+- What is my current account balance?: "NONE"
             """,
         },
     )

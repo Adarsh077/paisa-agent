@@ -24,24 +24,19 @@ async def chat_agent(messages: list[ChatMessage] = []):
 
     primary_message = preprocess(primary_message, chat_history)
 
-    agents = await select(primary_message, chat_history=chat_history)
+    plan_response = await plan(primary_message, chat_history=chat_history)
+    if plan_response:
+        primary_message = f"{primary_message} \n\n Plan: {plan_response}"
 
-    response = ""
+    response = await chat_execute(primary_message, chat_history=chat_history)
 
-    for agent in agents:
-        if agent == "display":
-            if response:
-                messages.append(ChatMessage(role="assistant", content=str(response)))
-            response = viewer(messages)
-            response = {"type": "navigate", "data": response}
-        elif agent == "executor":
-            plan_response = await plan(primary_message, chat_history=chat_history)
-            if plan_response:
-                primary_message = f"{primary_message} \n\n Plan: {plan_response}"
+    if response:
+        messages.append(ChatMessage(role="assistant", content=str(response)))
 
-            response = await chat_execute(primary_message, chat_history=chat_history)
-        else:
-            raise ValueError(f"Unknown agent: {agent}")
+    viewer_response = viewer(primary_message, chat_history=chat_history)
+
+    if viewer_response != "NONE":
+        response = {"type": "navigate", "data": viewer_response}
 
     return response
 
