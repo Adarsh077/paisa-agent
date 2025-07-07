@@ -74,6 +74,7 @@ Provide transparent, actionable plans, strictly aligned to Paisa’s schema and 
 - If year is not provided, assume the current year.
 - If month is not provided, assume the current month.
 - If day is not provided, assume the current day.
+- Do not call tools to display transactions. You can skip this step if the user asks to view transactions.
 """
 
 

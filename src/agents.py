@@ -3,6 +3,8 @@ from .planner.planner import plan
 from .executors.chat_executor import chat_execute
 from .executors.sms_executor import sms_execute
 from .preprocessor.precprocessor import preprocess
+from .viewer.viewer import viewer
+from .selector.selector import select
 
 
 async def chat_agent(messages: list[ChatMessage] = []):
@@ -22,11 +24,25 @@ async def chat_agent(messages: list[ChatMessage] = []):
 
     primary_message = preprocess(primary_message, chat_history)
 
-    plan_response = await plan(primary_message, chat_history=chat_history)
-    if plan_response:
-        primary_message = f"{primary_message} \n\n Plan: {plan_response}"
+    agents = await select(primary_message, chat_history=chat_history)
 
-    response = await chat_execute(primary_message, chat_history=chat_history)
+    response = ""
+
+    for agent in agents:
+        if agent == "display":
+            if response:
+                messages.append(ChatMessage(role="assistant", content=str(response)))
+            response = viewer(messages)
+            response = {"type": "navigate", "data": response}
+        elif agent == "executor":
+            plan_response = await plan(primary_message, chat_history=chat_history)
+            if plan_response:
+                primary_message = f"{primary_message} \n\n Plan: {plan_response}"
+
+            response = await chat_execute(primary_message, chat_history=chat_history)
+        else:
+            raise ValueError(f"Unknown agent: {agent}")
+
     return response
 
 
