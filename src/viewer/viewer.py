@@ -14,7 +14,7 @@ tools = [
                 "properties": {
                     "tags": {
                         "type": "string",
-                        "description": "Comma-separated tag IDs.",
+                        "description": "Comma-separated tag IDs. Use 'None' to get transactions without any tags",
                     },
                     "label": {"type": "string", "description": "Search by label."},
                     "startDate": {
@@ -38,14 +38,13 @@ tools = [
 ]
 
 
-def viewer(primary_message: str, chat_history: list = []):
-    messages = [{"role": m.role, "content": m.content} for m in chat_history]
-    messages.append({"role": "user", "content": primary_message})
+def viewer(primary_message: str, chat_history: list = [], agent_response: str = ""):
+    messages = []
     messages.append(
         {
             "role": "system",
             "content": f"""
-Call only the tools if user is specifically asking to view list of transactions. Do not call the tools if the question is not related to transactions or if it is calculation based.
+Call only the tools if user is specifically asking to view list of transactions in latest message. Do not call the tools if the question is not related to transactions or if it is calculation based.
 Return 'NONE' if the question is not related to transactions or if tools cannot be used.
 
 ALWAYS Return 'NONE' for calculation based questions or if the question is not related to transactions.
@@ -56,6 +55,9 @@ ALWAYS Return 'NONE' for calculation based questions or if the question is not r
             """,
         },
     )
+    messages.extend([{"role": m.role, "content": m.content} for m in chat_history])
+    messages.append({"role": "user", "content": primary_message})
+    messages.append({"role": "assistant", "content": agent_response})
 
     completion = client.chat.completions.create(
         model="gpt-4.1", messages=messages, tools=tools, parallel_tool_calls=False

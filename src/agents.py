@@ -33,7 +33,9 @@ async def chat_agent(messages: list[ChatMessage] = []):
     if response:
         messages.append(ChatMessage(role="assistant", content=str(response)))
 
-    viewer_response = viewer(primary_message, chat_history=chat_history)
+    viewer_response = viewer(
+        primary_message, chat_history=chat_history, agent_response=str(response)
+    )
 
     if viewer_response != "NONE":
         response = {"type": "navigate", "data": viewer_response}
