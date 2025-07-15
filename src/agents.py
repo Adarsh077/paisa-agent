@@ -5,6 +5,7 @@ from .executors.sms_executor import sms_execute
 from .preprocessor.precprocessor import preprocess
 from .viewer.viewer import viewer
 from .selector.selector import select
+import json
 
 
 async def chat_agent(messages: list[ChatMessage] = []):
@@ -38,7 +39,7 @@ async def chat_agent(messages: list[ChatMessage] = []):
     )
 
     if viewer_response != "NONE":
-        response = {"type": "navigate", "data": viewer_response}
+        response = json.dumps({"type": "navigate", "data": viewer_response})
 
     return response
 
