@@ -2,6 +2,7 @@ from llama_index.core.base.llms.types import ChatMessage
 from src.tools.tools import get_tools
 from llama_index.core.agent import FunctionCallingAgent
 from llama_index.llms.openai import OpenAI
+from typing import Optional
 
 llm = OpenAI(model="gpt-4.1-mini")
 
@@ -25,8 +26,8 @@ Examples:
 """
 
 
-async def __create_selector_agent():
-    tools = await get_tools()
+async def __create_selector_agent(jwt_token: Optional[str] = None):
+    tools = await get_tools(jwt_token)
 
     agent = FunctionCallingAgent.from_tools(
         llm=llm,
@@ -38,11 +39,11 @@ async def __create_selector_agent():
     return agent
 
 
-async def select(message: str, chat_history: list[ChatMessage] = []):
+async def select(message: str, chat_history: list[ChatMessage] = [], jwt_token: Optional[str] = None):
     if not message:
         raise ValueError("No message provided")
 
-    agent = await __create_selector_agent()
+    agent = await __create_selector_agent(jwt_token)
 
     response = await agent.achat(message, chat_history=chat_history)
     return str(response).split(",") if response else []

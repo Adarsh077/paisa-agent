@@ -1,9 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Header
 from pydantic import BaseModel
 from .agents import chat_agent, sms_agent
 from llama_index.core.base.llms.types import ChatMessage
 import json
 import logging
+from typing import Optional
 
 app = FastAPI()
 logger = logging.getLogger(__name__)
@@ -19,17 +20,27 @@ class ChatRequest(BaseModel):
 
 
 @app.post("/chat")
-async def agent_endpoint(request: ChatRequest):
+async def agent_endpoint(request: ChatRequest, authorization: Optional[str] = Header(None)):
+    # Extract JWT token from Authorization header
+    jwt_token = None
+    if authorization and authorization.startswith("Bearer "):
+        jwt_token = authorization[7:]  # Remove "Bearer " prefix
+    
     messages = [ChatMessage(role=m.role, content=m.content) for m in request.messages]
-    response = await chat_agent(messages)
+    response = await chat_agent(messages, jwt_token=jwt_token)
     # For chat agent, return the response as plain text
     return {"response": str(response)}
 
 
 @app.post("/sms")
-async def sms_agent_endpoint(request: ChatRequest):
+async def sms_agent_endpoint(request: ChatRequest, authorization: Optional[str] = Header(None)):
+    # Extract JWT token from Authorization header
+    jwt_token = None
+    if authorization and authorization.startswith("Bearer "):
+        jwt_token = authorization[7:]  # Remove "Bearer " prefix
+    
     messages = [ChatMessage(role=m.role, content=m.content) for m in request.messages]
-    response = await sms_agent(messages)
+    response = await sms_agent(messages, jwt_token=jwt_token)
 
     # SMS agent returns JSON string, so we need to parse it
     try:

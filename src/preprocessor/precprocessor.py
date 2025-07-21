@@ -2,18 +2,18 @@ import requests
 from src import config
 
 
-def get_all_tags():
-    response = requests.get(f"{config.API_BASE_URL}/tags")
+def get_all_tags(jwt_token=""):
+    headers = {"Authorization": f"Bearer {jwt_token}"} if jwt_token else {}
+    response = requests.get(f"{config.API_BASE_URL}/tags", headers=headers)
     data = response.json()
     return data
 
 
-def preprocess(prompt, chat_history):
-    tags = get_all_tags()
+def preprocess(prompt, chat_history, jwt_token=""):
+    tags = get_all_tags(jwt_token)
 
-    # Find tags mentioned in the prompt and chat_history
     found_tags = []
-    found_tag_ids = set()  # To avoid duplicates
+    found_tag_ids = set()
 
     for tag in tags:
         tag_label = tag.get("label", "")
@@ -24,11 +24,9 @@ def preprocess(prompt, chat_history):
 
         tag_found = False
 
-        # Search for tag label in prompt (case-insensitive)
         if tag_label.lower() in prompt.lower():
             tag_found = True
 
-        # Search for tag label in chat_history (case-insensitive)
         if chat_history:
             for message in chat_history:
                 message_content = getattr(message, "content", "") or ""
@@ -36,12 +34,10 @@ def preprocess(prompt, chat_history):
                     tag_found = True
                     break
 
-        # Add tag if found and not already added
         if tag_found and tag_id not in found_tag_ids:
             found_tags.append({"label": tag_label, "id": tag_id})
             found_tag_ids.add(tag_id)
 
-    # Format output
     result = prompt
 
     if found_tags:

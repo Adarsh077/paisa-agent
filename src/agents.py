@@ -6,9 +6,10 @@ from .preprocessor.precprocessor import preprocess
 from .viewer.viewer import viewer
 from .selector.selector import select
 import json
+from typing import Optional
 
 
-async def chat_agent(messages: list[ChatMessage] = []):
+async def chat_agent(messages: list[ChatMessage] = [], jwt_token: Optional[str] = None):
     if not messages:
         raise ValueError("No messages provided")
     if not isinstance(messages, list) or not all(
@@ -23,13 +24,17 @@ async def chat_agent(messages: list[ChatMessage] = []):
     if len(messages) > 1:
         chat_history = messages[:-1]
 
-    primary_message = preprocess(primary_message, chat_history)
+    primary_message = preprocess(primary_message, chat_history, jwt_token)
 
-    plan_response = await plan(primary_message, chat_history=chat_history)
+    plan_response = await plan(
+        primary_message, chat_history=chat_history, jwt_token=jwt_token
+    )
     if plan_response:
         primary_message = f"{primary_message} \n\n Plan: {plan_response}"
 
-    response = await chat_execute(primary_message, chat_history=chat_history)
+    response = await chat_execute(
+        primary_message, chat_history=chat_history, jwt_token=jwt_token
+    )
 
     if response:
         messages.append(ChatMessage(role="assistant", content=str(response)))
@@ -44,7 +49,7 @@ async def chat_agent(messages: list[ChatMessage] = []):
     return response
 
 
-async def sms_agent(messages: list[ChatMessage] = []):
+async def sms_agent(messages: list[ChatMessage] = [], jwt_token: Optional[str] = None):
     if not messages:
         raise ValueError("No messages provided")
     if not isinstance(messages, list) or not all(
@@ -59,11 +64,15 @@ async def sms_agent(messages: list[ChatMessage] = []):
     if len(messages) > 1:
         chat_history = messages[:-1]
 
-    primary_message = preprocess(primary_message, chat_history)
+    primary_message = preprocess(primary_message, chat_history, jwt_token)
 
-    plan_response = await plan(primary_message, chat_history=chat_history)
+    plan_response = await plan(
+        primary_message, chat_history=chat_history, jwt_token=jwt_token
+    )
     if plan_response:
         primary_message = f"{primary_message} \n\n Plan: {plan_response}"
 
-    response = await sms_execute(primary_message, chat_history=chat_history)
+    response = await sms_execute(
+        primary_message, chat_history=chat_history, jwt_token=jwt_token
+    )
     return response
