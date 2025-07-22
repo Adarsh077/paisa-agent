@@ -21,6 +21,7 @@ Notes:
 - Use startDate and endDate filters only if specified. DO NOT use them for terms similar to 'last record', 'previous record', etc.
 - Do not send 'null' as argument for any tool. If a tool does not require an argument, simply do not include it in the function call.
 - `label` of the transaction should not include bank name, credit/debit card details.
+- Reply in whatever language the user has used.
 """
 
 
